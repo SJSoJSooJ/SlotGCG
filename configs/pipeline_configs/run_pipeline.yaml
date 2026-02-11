@@ -1,0 +1,171 @@
+# This is a config file for the run_pipeline.py script. The entries in this config specify proper method names that appear in tables of the HarmBench paper.
+# E.g., GCG-Transfer test cases are generated using the EnsembleGCG class with a specific set of hyperparameters.
+
+# ===== Documentation for the fields ===== #
+# class_name: The name of the class defining a red teaming method. These are defined in the `baselines` folder.
+#             This may be different from the proper name of a method. E.g., GCG-Transfer is an instance of the EnsembleGCG class.
+# experiment_name_template: A template for the experiment name. This is used to generate experiment names for each target model.
+#                           The template can include the placeholder "<model_name>", in which case an experiment name is generated
+#                           for each target model according to the template, and the resulting test cases will only be evaluated on
+#                           the target model specified in the experiment name.
+# behavior_chunk_size: The number of behaviors to generate test cases for in a single slurm job. This enables parallelizing across behaviors.
+#                      (Note: Some methods do not support parallelizing across behaviors. E.g., EnsembleGCG jointly optimizes over all behaviors.)
+#                      (Note: This can be defined at the base level or at the experiment level. The experiment level takes precedence.)
+# base_num_gpus: The base number of GPUs to use for generating test cases. If experiment_name_template includes "<model_name>", then we will
+#                request `num_gpus` additional GPUs, where `num_gpus` is specified in the corresponding model config. For methods that do not
+#                have "<model_name>" in their experiment_name_template, we will only request `base_num_gpus` GPUs.
+# run_ids: A list of run IDs to use for the method. This is used for methods that require multiple runs to be averaged (e.g., EnsembleGCG).
+#          This enables parallelization within behaviors, if you want to generate multiple test cases per behavior in parallel.
+#          We use this for GCG-Multi and GCG-Transfer to obtain a lower-variance estimate of ASR.
+# allowed_target_model_types: A list of model types that the method is designed to target (e.g., "open_source", "closed_source", "open_source_multimodal", "closed_source_multimodal").
+
+GCG:
+  class_name: GCG
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_hij:
+  class_name: GCG_hij
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_hij_posinit_attention:
+  class_name: GCG_hij_posinit_attention
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp30:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp30
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp25:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp25
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp20:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp20
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp15:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp15
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp10:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp10
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp8:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp8
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp5:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp5
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_attention_temp1:
+  class_name: GCG_posinit_attention
+  experiment_name_template: <model_name>_GCG_posinit_attention_temp1
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG_posinit_random:
+  class_name: GCG_posinit_random
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+I_GCG:
+  class_name: I_GCG
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+I_GCG_posinit_attention:
+  class_name: I_GCG_posinit_attention
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+AttnGCG:
+  class_name: AttnGCG
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+AttnGCG_posinit_attention:
+  class_name: AttnGCG_posinit_attention
+  experiment_name_template: <model_name>
+  behavior_chunk_size: 1
+  base_num_gpus: 0
+  allowed_target_model_types: [open_source]
+
+GCG-Multi:
+  class_name: EnsembleGCG
+  experiment_name_template: <model_name>
+  behavior_chunk_size: all_behaviors
+  base_num_gpus: 0
+  run_ids: [0]
+  allowed_target_model_types: [open_source]
+
+I_GCG-Multi:
+  class_name: Ensemble_I_GCG
+  experiment_name_template: <model_name>
+  behavior_chunk_size: all_behaviors
+  base_num_gpus: 0
+  run_ids: [0]
+  allowed_target_model_types: [open_source]
+
+AttnGCG-Multi:
+  class_name: EnsembleAttnGCG
+  experiment_name_template: <model_name>
+  behavior_chunk_size: all_behaviors
+  base_num_gpus: 0
+  run_ids: [0]
+  allowed_target_model_types: [open_source]
+
+GCG_hij-Multi:
+  class_name: EnsembleGCG_hij
+  experiment_name_template: <model_name>
+  behavior_chunk_size: all_behaviors
+  base_num_gpus: 0
+  run_ids: [0]
+  allowed_target_model_types: [open_source]
