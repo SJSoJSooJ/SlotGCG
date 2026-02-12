@@ -1,6 +1,6 @@
 <div align="center">
 
-### SlotGCG: Exploiting the Positional Vulnerability in LLMs for Jailbreak Attacks
+# SlotGCG: Exploiting the Positional Vulnerability in LLMs for Jailbreak Attacks
 
 [**Paper (OpenReview)**](https://openreview.net/forum?id=Fn2rSOnpNf)
 
