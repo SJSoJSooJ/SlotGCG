@@ -1,8 +1,8 @@
 <div align="center">
 
-# SlotGCG
+### SlotGCG: Exploiting the Positional Vulnerability in LLMs for Jailbreak Attacks
 
-### A Slot-Based Approach to Greedy Coordinate Gradient Attacks on Large Language Models
+[**Paper (OpenReview)**](https://openreview.net/forum?id=Fn2rSOnpNf)
 
 </div>
 
@@ -12,236 +12,118 @@
 
 ## Overview
 
-SlotGCG is a novel adversarial attack method for large language models (LLMs) that enhances the Greedy Coordinate Gradient (GCG) approach through slot-based optimization. Built on the HarmBench evaluation framework, SlotGCG introduces several variants of position-aware and attention-guided optimization strategies to improve the effectiveness and efficiency of adversarial prompt generation.
+**SlotGCG** is an optimization-based red-teaming method that extends **Greedy Coordinate Gradient (GCG)** by explicitly searching for *vulnerable insertion slots* within a prompt (instead of restricting adversarial tokens to a fixed suffix position).
 
-This repository includes implementations of multiple SlotGCG variants:
-- **GCG_Posinit_Attention**: Position-initialized GCG with attention-based optimization
-- **AttGCG**: Attention-guided GCG
-- **I_GCG**: Iterative GCG with various initialization strategies
-- **GCG_HIJ**: GCG with hierarchical injection strategies
-- **Ensemble variants**: Multi-model ensemble attack methods using Ray for distributed computation
+At a high level, SlotGCG:
+1. **Probes positional vulnerability** using a *Vulnerable Slot Score (VSS)* over candidate insertion positions (*slots*).
+2. **Selects high-VSS slots** and runs token-level discrete optimization (GCG-style) **at those positions**.
+3. Improves attack success rate and often converges faster compared to suffix-only optimization.
 
-## Quick Start
+This repository is built on top of the **HarmBench** evaluation pipeline and provides several SlotGCG variants, including position-aware initialization and attention-guided heuristics.
 
-### Installation
+> **Responsible use:** This code is intended for *research and safety evaluation* of LLMs. Only run attacks on models and systems you own or are authorized to test, and follow applicable laws/policies.
 
-#### Using Conda (Recommended)
+## What’s in this repo
+
+Implemented method families (names may vary by config):
+
+- **GCG_Posinit_Attention**: position-initialized GCG with attention-guided optimization
+- **AttGCG**: attention-guided GCG
+- **I_GCG**: iterative GCG with multiple initialization strategies
+- **GCG_HIJ**: hierarchical injection strategies
+- **Ensemble variants**: multi-model / distributed runs via **Ray**
+
+## Installation
+
+### Using Conda (recommended)
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/SlotGCG.git
+git clone https://github.com/SJSoJSooJ/SlotGCG.git
 cd SlotGCG
 
-# Create a new conda environment with Python 3.11
+# Create a conda environment (Python 3.11)
 conda create -n SlotGCG python=3.11 -y
-
-# Activate the environment
 conda activate SlotGCG
 
-# Install required packages
+# Install dependencies
 pip install -r requirements.txt
 
-# Download spacy language model
+# Download spaCy model (if required by the pipeline)
 python -m spacy download en_core_web_sm
 ```
 
-#### Using pip (Alternative)
+> **Windows note:** If you see line-ending warnings like `LF will be replaced by CRLF`, consider forcing LF for `.sh` files (e.g., via `.gitattributes`) to avoid execution issues on Linux/WSL.
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/SlotGCG.git
-cd SlotGCG
+## Running Experiments
 
-# Create a virtual environment
-python -m venv venv
+Always activate your environment first:
 
-# Activate the environment
-# On Windows:
-venv\Scripts\activate
-# On Linux/Mac:
-source venv/bin/activate
-
-# Install required packages
-pip install -r requirements.txt
-
-# Download spacy language model
-python -m spacy download en_core_web_sm
-```
-
-### Verify Installation
-
-After installation, verify that the key packages are properly installed:
-
-```bash
-# Activate your environment first
-conda activate SlotGCG  # or: source venv/bin/activate
-
-# Quick check
-python -c "import torch; import transformers; print('✓ Installation successful!')"
-
-# Detailed verification (recommended)
-python verify_installation.py
-```
-
-The verification script will check all core dependencies and provide detailed information about your environment.
-
-### Running Experiments
-
-The evaluation pipeline consists of three main steps: (1) generating test cases, (2) generating completions, and (3) evaluating completions.
-
-**Important:** Always activate your conda environment before running experiments:
 ```bash
 conda activate SlotGCG
 ```
 
-#### Step 1: Generate Test Cases
+### Run Complete Pipeline
+
+This runs the full HarmBench-style pipeline end-to-end (generate test cases → generate completions → evaluate):
 
 ```bash
-# Generate test cases for GCG with position-initialized attention
-python scripts/run_pipeline.py \
-  --methods gcg_posinit_attention \
-  --models llama2_7b \
-  --step 1 \
-  --mode local
-
-# Generate test cases for attention-guided GCG
-python scripts/run_pipeline.py \
-  --methods attngcg_posinit_attention \
-  --models llama2_7b \
-  --step 1 \
-  --mode local
-
-# Generate test cases for iterative GCG
-python scripts/run_pipeline.py \
-  --methods i_gcg \
-  --models llama2_7b \
-  --step 1 \
-  --mode local
-```
-
-#### Step 2: Generate Completions
-
-```bash
-# Generate completions using the test cases from Step 1
-python scripts/run_pipeline.py \
-  --methods gcg_posinit_attention \
-  --models llama2_7b \
-  --step 2 \
-  --mode local
-```
-
-#### Step 3: Evaluate Completions
-
-```bash
-# Evaluate the generated completions
-python scripts/run_pipeline.py \
-  --methods gcg_posinit_attention \
-  --models llama2_7b \
-  --step 3 \
-  --mode local
-```
-
-#### Run Complete Pipeline
-
-```bash
-# Run all steps at once (Steps 1, 2, and 3)
 python scripts/run_pipeline.py \
   --methods gcg_posinit_attention \
   --models llama2_7b \
   --step all \
   --mode local
-
-# Or run Steps 2 and 3 together
-python scripts/run_pipeline.py \
-  --methods gcg_posinit_attention \
-  --models llama2_7b \
-  --step 2_and_3 \
-  --mode local
 ```
 
-#### Execution Modes
+**Arguments (high level):**
+- `--methods`: which SlotGCG/GCG variant to run
+- `--models`: target model key(s)
+- `--step all`: run the full pipeline
+- `--mode`: execution mode (`local`, `local_parallel` with Ray, or `slurm`)
 
-- `--mode local`: Sequential execution on current machine
-- `--mode local_parallel`: Parallel execution using Ray across multiple GPUs
-- `--mode slurm`: Distributed execution on SLURM cluster
+## Configuration
 
-#### Available Methods
+### Add / edit models
 
-```bash
-# Standard GCG variants
---methods gcg                          # Basic GCG
---methods gcg_posinit_attention        # GCG with position-init attention
---methods gcg_posinit_random           # GCG with random position-init
+Add new model entries in:
 
-# Attention-based variants
---methods attngcg                      # Attention-guided GCG
---methods attngcg_posinit_attention    # AttGCG with position-init
+- `configs/model_configs/models.yaml`
 
-# Iterative variants
---methods i_gcg                        # Iterative GCG
---methods i_gcg_posinit_attention      # I-GCG with position-init
+Most variants should work with new models via configuration (no code changes).
 
-# Hierarchical injection variants
---methods gcg_hij                      # GCG with hierarchical injection
---methods gcg_hij_posinit_attention    # GCG-HIJ with position-init
+### Add new methods
 
-# Ensemble variants (requires Ray)
---methods gcg_posinit_attention_ensemble
---methods i_gcg_ensemble
-```
+Attack methods live under:
 
-#### Example: Multi-GPU Execution
+- `baselines/`
 
-```bash
-# Use Ray for parallel execution across multiple GPUs
-python scripts/run_pipeline.py \
-  --methods gcg_posinit_attention_ensemble \
-  --models llama2_7b \
-  --step all \
-  --mode local_parallel
-```
+To add a new variant, create a new module and implement the `RedTeamingMethod` interface defined in:
 
-### Using Your Own Models
-
-You can add new models in [configs/model_configs/models.yaml](configs/model_configs/models.yaml). Most SlotGCG variants support dynamic configuration for new models without manual adjustments.
-
-### Adding Custom Methods
-
-All attack methods are implemented in the [baselines](baselines) directory. To add a new variant, create a new subfolder and implement the `RedTeamingMethod` interface defined in [baselines/baseline.py](baselines/baseline.py).
+- `baselines/baseline.py`
 
 ## Acknowledgements
 
-This work builds upon several excellent open-source repositories:
+This repository builds upon and integrates ideas/tools from:
 
-- [HarmBench](https://github.com/centerforaisafety/HarmBench) - Standardized evaluation framework for automated red teaming
-- [llm-attacks](https://github.com/llm-attacks/llm-attacks) - Original GCG implementation
-- [FastChat](https://github.com/lm-sys/FastChat) - LLM serving framework
-- [Ray](https://github.com/ray-project/ray) - Distributed computing framework
-- [vLLM](https://github.com/vllm-project/vllm) - Fast LLM inference engine
-- [Transformers](https://github.com/huggingface/transformers) - Hugging Face transformers library
+- **HarmBench** – standardized evaluation pipeline for automated red teaming
+- **llm-attacks** – original GCG implementation
+- **FastChat** – LLM serving utilities
+- **Ray** – distributed computation
+- **vLLM** – fast inference engine
+- **Transformers** – Hugging Face transformers
 
-We thank the authors of these repositories for their contributions to the open-source community.
+We thank the authors and maintainers of these projects.
 
 ## Citation
 
-If you find SlotGCG useful in your research, please consider citing:
+If you use SlotGCG in your research, please cite the paper:
 
 ```bibtex
-@article{slotgcg2026,
-  title={SlotGCG: A Slot-Based Approach to Greedy Coordinate Gradient Attacks},
-  author={Your Name and Collaborators},
-  year={2026},
-  journal={arXiv preprint arXiv:XXXX.XXXXX}
-}
-```
-
-We also acknowledge the HarmBench framework:
-
-```bibtex
-@article{mazeika2024harmbench,
-  title={HarmBench: A Standardized Evaluation Framework for Automated Red Teaming and Robust Refusal},
-  author={Mantas Mazeika and Long Phan and Xuwang Yin and Andy Zou and Zifan Wang and Norman Mu and Elham Sakhaee and Nathaniel Li and Steven Basart and Bo Li and David Forsyth and Dan Hendrycks},
-  year={2024},
-  journal={arXiv preprint arXiv:2402.04249}
+@inproceedings{jeong2026slotgcg,
+  title     = {SlotGCG: Exploiting the Positional Vulnerability in LLMs for Jailbreak Attacks},
+  author    = {Jeong, Seungwon and Jeong, Jiwoo and Kim, Hyeonjin and Lee, Yunseok and Lee, Woojin},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2026},
+  url       = {https://openreview.net/forum?id=Fn2rSOnpNf}
 }
 ```
