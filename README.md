@@ -10,7 +10,7 @@
   <img src="assets/overview.png" alt="SlotGCG Overview" width="800"/>
 </p>
 
-## Overview
+## :compass: Overview
 
 **SlotGCG** is an optimization-based red-teaming method that extends **Greedy Coordinate Gradient (GCG)** by explicitly **searching for *vulnerable insertion slots* within a prompt** (instead of restricting adversarial tokens to a fixed suffix position).
 
@@ -21,7 +21,7 @@ Overview of SlotGCG:
 
 This repository is built on top of the **[HarmBench](https://github.com/centerforaisafety/HarmBench)** evaluation pipeline and provides several SlotGCG variants.
 
-## Supported SlotGCG variants
+## :test_tube: Supported SlotGCG variants
 
 | Method               | Paper | Description                                                                                                                                                                                                          |
 | -------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,7 +38,7 @@ This repository is built on top of the **[HarmBench](https://github.com/centerfo
 
 
 
-## Installation
+## :gear: Installation
 
 ### Using Conda (recommended)
 
@@ -58,7 +58,7 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-## Running Experiments
+## :rocket: Running Experiments
 
 ### Run Complete Pipeline
 
@@ -86,7 +86,7 @@ python scripts/run_pipeline.py \
 - `--step all`: run the full pipeline
 - `--mode`: execution mode (`local`, `local_parallel` with Ray, or `slurm`)
 
-## Configuration
+## :wrench: Configuration
 
 ### Add / edit models
 
@@ -106,7 +106,7 @@ To add a new variant, create a new module and implement the `RedTeamingMethod` i
 
 - `baselines/baseline.py`
 
-## Acknowledgements
+## :pray: Acknowledgements
 
 We thank the following open-source repositories.
 
@@ -119,7 +119,7 @@ We thank the following open-source repositories.
 
 We thank the authors and maintainers of these projects.
 
-## Citation
+## :memo: Citation
 
 If you use SlotGCG in your research, please cite the paper:
 
