@@ -116,6 +116,11 @@ We thank the following open-source repositories.
 - **[interp-jailbreak](https://github.com/matanbt/interp-jailbreak)** – GCG-Hij attacks implementation
 - **[I-GCG](https://github.com/jiaxiaojunQAQ/I-GCG)** – I-GCG attack implementation
 - **[text-adversarial-attack](https://github.com/facebookresearch/text-adversarial-attack)** – GBDA attacks implementation
+- **[SafeDecoding](https://github.com/uw-nsl/SafeDecoding)** – SafeDecoding implementation
+- **[rpo](https://github.com/lapisrocks/rpo)** – RPO implementation
+- **[certified-llm-safety](https://github.com/aounon/certified-llm-safety)** – Erase_And_Check implementation
+- **[smooth-llm](https://github.com/arobey1/smooth-llm)** – SmoothLLM implementation
+
 
 We thank the authors and maintainers of these projects.
 
