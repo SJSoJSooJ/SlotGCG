@@ -1,3 +1,5 @@
+
+
 <div align="center">
 
 # SlotGCG: Exploiting the Positional Vulnerability in LLMs for Jailbreak Attacks
@@ -44,7 +46,7 @@ This repository is built on top of the **[HarmBench](https://github.com/centerfo
 
 ```bash
 # Clone the repository
-git clone https://github.com/SJSoJSooJ/SlotGCG.git
+git clone https://github.com/youai058/SlotGCG.git
 cd SlotGCG
 
 # Create a conda environment (Python 3.11)
